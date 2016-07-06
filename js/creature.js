@@ -203,10 +203,8 @@ var creature = function(img, gravity, position, width, height, bounds, options){
             }
         }
     }        
-    if (input.key_code[39] || input.key_code[68]) {
-        if(displacedX && !this.self.floor){
-            this.self.position.x+= this.self.velX-3;
-        }
+    if(game.centered>0){
+       this.self.position.x+= this.self.velX-game.centerVelocity;
     }
     };    
     this.colliding = function(){

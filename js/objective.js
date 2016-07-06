@@ -32,6 +32,10 @@ var objective = function(img, gravity, position, width, height, bounds, options)
     this.dialog = "";
     this.actualDialog = "";
     this.finish = false;
+    this.answers = [];
+    this.answered = false;
+    this.selectedAnswer = null;
+    this.pendingAnswer = false;
     this.create = function(img, gravity, position, width, height, options){
             if( typeof(img) != "undefined" && img != null){
                 this.img= img;
@@ -85,6 +89,10 @@ var objective = function(img, gravity, position, width, height, bounds, options)
                     if(typeof(options.dialog) != "undefined" ) {
                         this.dialog = options.dialog;
                     }
+                    if(typeof(options.answers) != "undefined" ) {
+                        this.answers = options.answers;
+                        this.selectedAnswer =  0;
+                    }
             }                  
     };
     this.update = function() {
@@ -93,17 +101,24 @@ var objective = function(img, gravity, position, width, height, bounds, options)
             this.actualDialog+=this.dialog.slice(0,1);
             this.dialog = this.dialog.substr(1);
         }
-        if(this.dialog == "") this.finish = true;
+        if(this.dialog == "" && this.pendingAnswer === false ){
+            if(  this.answers.length > 0 && this.answered ){
+                this.finish = true;
+            }
+            if( this.answers.length==0 ) {
+                this.finish = true;
+            }
+        }
         // update the counter
         this.counter = (this.counter + 1) % this.frameSpeed;
     };
     this.animate = function(displacedX){
-        game.canvas.drawRect(this.position, this.height, this.width,{color:'#000', name:name, creature:true});
+      //  game.canvas.drawRect(this.position, this.height, this.width,{color:'#000', name:name, creature:true});
         this.movement(displacedX);
     };
     this.movement = function(displacedX){
         if(game.centered>0){
-           this.self.position.x+= this.self.velX-3;
+           this.self.position.x+= this.self.velX-game.centerVelocity;
         }
     };
     this.colliding = function(){
@@ -123,19 +138,80 @@ var objective = function(img, gravity, position, width, height, bounds, options)
     };  
     this.doObjectives = function(){
         if(!game.pauseInput && !this.finish){
-            game.disableInput();
+      //      game.disableInput();
             game.players[0].clearStatus();
             game.cinematics = true;
         }
         if(!this.finish){
             this.update();
         }else{
-            game.enableInput();
+      //      game.enableInput();
             input.clearKeys();
             this.finish = true;
             game.cinematics = false;
         }
-        game.canvas.drawText(this.actualDialog, {color:"#FFFFFF", x:20, y:70, font:'bolder 20px Courier New'});
+        game.canvas.drawText(this.actualDialog, {color:"#000", x:20, y:70, font:'bolder 20px Courier New'});
+        if( this.dialog == "" ) {
+            for(var c = 0; c <  this.answers.length; c++){
+                if(c == this.selectedAnswer){
+                    game.canvas.drawText(this.answers[c].dialog, {color:"#FF0000", x:20, y:120 + 20*c, font:'bolder 20px Courier New'});
+                }else{
+                    game.canvas.drawText(this.answers[c].dialog, {color:"#00FF33", x:20, y:120 + 20*c, font:'bolder 20px Courier New'});
+                }
+            }
+        }
+        this.chooseAnswer();
+        if (input.key_code[13]=== true) {
+            if(this.pendingAnswer === false){
+                this.answers = [];
+                this.actualDialog = " ";
+                this.answered = true;
+                this.pendingAnswer = true;
+                switch(this.selectedAnswer){
+                    case 0:
+                        this.dialog = 'AAAAHHHH BOEEEEEE ';
+                        break;
+                    case 1:
+                        this.dialog = 'Bueno bueno no te quejes ';
+                        break;
+                    case 2:
+                        this.dialog = '... puede ser mi error ';
+                        break;
+                }
+                input.clearKeys();
+            }else{
+                this.finish = true;
+                 input.clearKeys();
+            }
+        }
+    };
+    this.chooseAnswer = function(){
+        if(this.answers.length==0) return false;
+        if (input.key_code[38] || input.key_code[40]) {
+                for(var c = 0; c < this.answers.length; c++){
+                    console.log(c, this.selectedAnswer, this.answers);
+                    if( c == this.selectedAnswer) {
+                        if (input.key_code[40] === true) {
+                            if(c+1 < this.answers.length){
+                                this.selectedAnswer = c + 1;
+                            }else{
+                                this.selectedAnswer = 0;
+                            }
+                            input.clearKeys();
+                            return true;
+                        }
+                        if (input.key_code[38] === true) {
+                            if(c == 0){
+                                this.selectedAnswer = this.answers.length - 1;
+                            }else{
+                                this.selectedAnswer = c - 1;
+                            }
+                            input.clearKeys();
+                            return true;
+                        }
+                    }
+                }
+        }
     };
     this.create(img, gravity, position, width, height, bounds, options);
 };

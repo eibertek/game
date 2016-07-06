@@ -17,6 +17,7 @@ var game = {
     pauseInput:false,
     cinematics:false,
     centered:0,
+    centerVelocity:5,
     colCheck: function(shapeA, shapeB) {
             // get the vectors to check against
             var vX = (shapeA.position.x + (shapeA.width / 2)) - (shapeB.position.x + (shapeB.width / 2)),
@@ -123,8 +124,8 @@ var game = {
     render: function(){
         game.canvas.ctx.clearRect(0, 0, game.canvas.container.width, game.canvas.container.height); 
         displaceX = false;
-        if(!game.pauseInput && game.players[0].position.x > game.canvas.container.width*8/10){
-            game.centered=Math.abs(game.canvas.container.width/2);        
+        if(!game.pauseInput && game.players[0].position.x > game.canvas.container.width*9.2/10){
+            game.centered=Math.abs(game.canvas.container.width/2);
         }
         game.drawBackground(displaceX);
         game.drawObjects(displaceX);

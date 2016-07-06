@@ -135,6 +135,7 @@ var player = function(data){
     };
     this.movement = function(){
         if(this.ia===true ) return false;
+        if(game.pauseInput) return false;
         if (input.key_code[38] || input.key_code[32] || input.key_code[87]) {
         // up arrow or space
         if (!this.self.jumping && this.self.grounded) {
@@ -164,7 +165,7 @@ var player = function(data){
              this.self.velY = 0;
         }
         if(game.centered>0){
-           this.self.position.x+= this.self.velX-3;
+           this.self.position.x+= this.self.velX-game.centerVelocity;
         }else{        
            this.self.position.x += this.self.velX;
         }
@@ -172,7 +173,6 @@ var player = function(data){
 
     };
     this.clearStatus = function(){
-        console.log(this.self.velX, this.self.velY, this.self.jumping,this.self.grounded);
         this.self.velX = 0;
         this.self.velY= 0;
         if(this.jumping){          

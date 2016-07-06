@@ -97,7 +97,10 @@ fondo.onload = function() {
                                //   addEnemy(1,1);
                                         },
                             dialog: 'Bueno, pasaste a los malos, ya fue ;)',
-                            frameSpeed:6,
+                            answers:[{dialog:'Y era obvio papaaaa',goto:0, selected:true},
+                                     {dialog:'No se eh, siempre hay maldad en el frente',goto:0, selected:false},
+                                     {dialog:'Posta? no vi a nadie',goto:0, selected:false}],
+                            frameSpeed:2,
                             }));
     game.addObjective(new objective(null,true, new game.canvas.vector(1900,135),
                             250,425,{ethereal:true, movable:false,

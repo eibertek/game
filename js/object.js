@@ -137,7 +137,7 @@ var object = function(img, gravity, position, width, height, bounds, options){
             this.touched = false;
     }   
     if(game.centered>0){
-       this.self.position.x+= this.self.velX-3;
+       this.self.position.x+= this.self.velX-game.centerVelocity;
     }
     
     };
